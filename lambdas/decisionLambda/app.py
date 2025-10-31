@@ -11,9 +11,6 @@ logger.setLevel(logging.INFO)
 
 table_name = os.environ.get('TABLE_NAME', 'rakan-devicestate')
 
-def decide_action_with_bedrock(context):
-    # Placeholder for future integration
-    return None
 
 def lambda_handler(event, context):
     logger.info(f"Received event: {json.dumps(event)}")
@@ -38,10 +35,6 @@ def lambda_handler(event, context):
                 action = {'action': 'set_mode', 'value': 'cool'}
             elif temperature <= 68 and occupancy:
                 action = {'action': 'set_mode', 'value': 'heat'}
-        # Bedrock placeholder
-        bedrock_action = decide_action_with_bedrock({'deviceId': device_id, 'reported': reported})
-        if bedrock_action:
-            action = bedrock_action
         if action:
             topic = f"devices/{device_id}/commands"
             try:

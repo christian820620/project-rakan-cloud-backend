@@ -57,4 +57,4 @@ Ingest Lambda only:
 5. `rakan-command` Lambda updates desired state and publishes to device
 
 ## TODO
-- Integrate advanced decision logic
+- Add more advanced decision logic if needed
