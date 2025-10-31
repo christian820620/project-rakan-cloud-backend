@@ -1,0 +1,16 @@
+﻿# python
+.venv/
+__pycache__/
+*.pyc
+
+# aws
+*.zip
+.aws/
+
+# iot secrets
+*.pem
+*.crt
+*.key
+
+# node (if used later)
+node_modules/
