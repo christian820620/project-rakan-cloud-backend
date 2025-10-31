@@ -20,6 +20,9 @@ Resources:
         - AttributeName: deviceId
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        Enabled: true
+        AttributeName: ttl
 
   RakanIngestFunction:
     Type: AWS::Serverless::Function
