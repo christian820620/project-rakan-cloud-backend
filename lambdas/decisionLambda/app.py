@@ -12,10 +12,7 @@ logger.setLevel(logging.INFO)
 table_name = os.environ.get('TABLE_NAME', 'rakan-devicestate')
 
 def decide_action_with_bedrock(context):
-    """
-    Placeholder for future Bedrock LAM integration.
-    Returns None for now.
-    """
+    # Placeholder for future integration
     return None
 
 def lambda_handler(event, context):

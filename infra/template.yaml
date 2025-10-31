@@ -101,7 +101,7 @@ Outputs:
     Description: ARN of command Lambda
     Value: !GetAtt RakanCommandFunction.Arn
 
-# --- IoT Rule Example (manual creation) ---
+# Example IoT Rule (manual creation):
 # AWS::IoT::TopicRule
 # Properties:
 #   RuleName: rakan-ingest-rule

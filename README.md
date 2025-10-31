@@ -1,13 +1,12 @@
 # Project Rakan - AWS Serverless IoT Automation System
 
 ## Overview
-Project Rakan is a serverless IoT automation backend using AWS IoT Core, Lambda, DynamoDB, and (future) Bedrock LAM. Arduino R4 WiFi devices publish telemetry to AWS IoT, triggering Lambda-based automation and device state management.
+Project Rakan is a serverless IoT automation backend using AWS IoT Core, Lambda, and DynamoDB. Arduino R4 WiFi devices publish telemetry to AWS IoT, triggering Lambda-based automation and device state management.
 
 ### AWS Services Used
 - **IoT Core**: Device messaging and rules
 - **Lambda**: Ingest, decision, and command functions
 - **DynamoDB**: Device state storage
-- **Bedrock**: (Planned) Large Action Model for advanced automation
 
 ## Folder Structure
 ```
@@ -58,4 +57,4 @@ Ingest Lambda only:
 5. `rakan-command` Lambda updates desired state and publishes to device
 
 ## TODO
-- Integrate Bedrock-based Large Action Model for advanced decision logic
+- Integrate advanced decision logic
