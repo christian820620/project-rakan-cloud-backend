@@ -31,9 +31,9 @@
         },
 
         "desiredState": {
-            "temperatureF": 72.0,
-            "mode": "Cool",
-            "fan": "auto"
+            "temperatureF": "<User defined>",
+            "mode": "<cool/heat/auto/off>",
+            "fan": "<on/off/auto>"
         },
 
         "status": "online",
