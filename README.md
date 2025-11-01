@@ -13,6 +13,7 @@ Project Rakan is a serverless IoT automation backend using AWS IoT Core, Lambda,
 README.md
 api-docs/
   smart_home_api.yaml
+  dynamodb_schema.json
 infra/
   template.yaml
 lambdas/
@@ -20,6 +21,50 @@ lambdas/
   decisionLambda/app.py
   commandLambda/app.py
 ```
+## DynamoDB Schema
+
+### Table: `rakan-devicestate`
+Stores current state and desired state of IoT devices (Arduino).
+
+**Table Configuration:**
+- **Partition Key**: `deviceId` (String)
+- **Billing Mode**: PAY_PER_REQUEST
+- **TTL**: Enabled on `ttl` attribute (data expiration in seconds)
+
+**Item Structure:**
+```json
+{
+  "deviceId": "thermo-001",
+  "currentState": {
+    "temperatureF": 72.5,
+    "humidity": 45.0,
+    "occupancy": true,
+    "timestamp": "2024-11-15T10:30:00Z"
+  },
+  "desiredState": {
+    "temperatureF": 70.0,
+    "mode": "cool",
+    "fan": "auto"
+  },
+  "status": "online",
+  "lastUpdated": 1699999999,
+  "ttl": 1700000000
+}
+```
+
+**Access Patterns:**
+- `GetItem(deviceId)` - Decision Lambda retrieves current device state
+- `PutItem(Item)` - Ingest Lambda stores new telemetry data
+- `UpdateItem(deviceId, desiredState)` - Command Lambda updates desired state
+
+## Environment Variables
+All Lambdas:
+- `TABLE_NAME` (default: rakan-devicestate)
+- `IOT_ENDPOINT` (IoT Data endpoint)
+
+Ingest Lambda only:
+- `DECISION_FUNCTION_NAME` (default: rakan-decision)
+
 
 ## Environment Variables
 All Lambdas:
