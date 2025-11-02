@@ -1,6 +1,6 @@
 { 
     "TableName": "rakan-devicestate",
-    "description": "Stores current state & desired state of iot devices(arduino)",,
+    "description": "Stores current state & desired state of iot devices(nano esp32)",,
     "KeySchema": [
         {
             "AttributeName": "deviceId",
@@ -43,9 +43,9 @@
     },
 
     "AccessPatterns":[
-        "GetItem(deviceID='arduino')->decison lambda",
+        "GetItem(deviceID='esp32')->decison lambda",
         "PutItem(Item=device_state) -> ingestLambda",
-        "UpdateItem(deviceID='arduino', desiredState=new_state) -> controlLambda"
+        "UpdateItem(deviceID='esp32', desiredState=new_state) -> controlLambda"
     ]
 
     
