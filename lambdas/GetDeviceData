@@ -1,0 +1,40 @@
+import json
+import boto3
+from datetime import datetime
+
+dynamodb = boto3.resource('dynamodb')
+apigw = boto3.client('apigatewaymanagementapi')
+device_table = dynamodb.Table('DeviceData')
+
+def lambda_handler(event, context):
+    domain_name = event['requestContext']['domainName']
+    stage = event['requestContext']['stage']
+    connection_id = event['requestContext']['connectionId']
+    endpoint = f"https://{domain_name}/{stage}"
+
+    body = json.loads(event.get('body', '{}'))
+    device_id = body.get('deviceId')
+
+    try:
+        # Retrieve device data
+        response = device_table.get_item(Key={'deviceId': device_id})
+        data = response.get('Item', None)
+
+        if not data:
+            message = {"status": "error", "message": f"Device {device_id} not found"}
+        else:
+            message = {
+                "status": "success",
+                "action": "getDeviceData",
+                "deviceId": device_id,
+                "data": data,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+
+        # Send response back to client
+        apigw.post_to_connection(ConnectionId=connection_id, Data=json.dumps(message).encode('utf-8'), EndpointUrl=endpoint)
+        return {"statusCode": 200}
+
+    except Exception as e:
+        print("Error:", e)
+        return {"statusCode": 500, "body": json.dumps({"error": str(e)})}
