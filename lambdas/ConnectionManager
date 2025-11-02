@@ -3,21 +3,23 @@ import boto3
 from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('DeviceConnections')
+table1 = dynamodb.Table('ConnectionID')
+table2 = dynamodb.Table('timestamp')
 
 def lambda_handler(event, context):
     route = event.get('requestContext', {}).get('routeKey')
     connection_id = event['requestContext']['connectionId']
 
     if route == '$connect':
-        table.put_item(Item={
-            'connectionId': connection_id,
+        table2.put_item(Item={
             'timestamp': datetime.utcnow().isoformat()
         })
+        table1.put_item(Item={'connectionId': connection_id}
+
         return {'statusCode': 200, 'body': 'Connected.'}
 
     elif route == '$disconnect':
-        table.delete_item(Key={'connectionId': connection_id})
+        table1.delete_item(Key={'connectionId': connection_id})
         return {'statusCode': 200, 'body': 'Disconnected.'}
 
     return {'statusCode': 400, 'body': 'Invalid route.'}
