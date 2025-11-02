@@ -1,0 +1,30 @@
+import json
+import boto3
+from datetime import datetime
+
+iot = boto3.client('iot-data', region_name='us-east-1')
+
+def lambda_handler(event, context):
+    body = json.loads(event.get('body', '{}'))
+    device_id = body.get('deviceId')
+    command = body.get('command')
+    parameters = body.get('parameters', {})
+
+    if not device_id or not command:
+        return {"statusCode": 400, "body": json.dumps({"status": "error", "message": "Missing deviceId or command"})}
+
+    try:
+        topic = f"devices/{device_id}/commands"
+        payload = {
+            "command": command,
+            "parameters": parameters,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+        # Publish to IoT Core topic
+        iot.publish(topic=topic, qos=1, payload=json.dumps(payload))
+        return {"statusCode": 200, "body": json.dumps({"status": "success", "message": f"Command '{command}' sent to {device_id}"})}
+
+    except Exception as e:
+        print("Error:", e)
+        return {"statusCode": 500, "body": json.dumps({"status": "error", "message": str(e)})}
