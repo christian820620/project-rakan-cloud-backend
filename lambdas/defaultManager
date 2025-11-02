@@ -1,0 +1,12 @@
+import json
+
+def lambda_handler(event, context):
+    connection_id = event['requestContext']['connectionId']
+    body = {
+        "status": "error",
+        "message": "Unknown action. Valid actions: getDeviceData, sendCommand."
+    }
+    return {
+        "statusCode": 400,
+        "body": json.dumps(body)
+    }
