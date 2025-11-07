@@ -24,6 +24,25 @@ Resources:
         Enabled: true
         AttributeName: ttl
 
+  RakanDeviceHistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: rakan-devicehistory
+      AttributeDefinitions:
+        - AttributeName: deviceId
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: S
+      KeySchema:
+        - AttributeName: deviceId
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        Enabled: true
+        AttributeName: ttl
+
   RakanIngestFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -33,11 +52,14 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: rakan-devicestate
+          HISTORY_TABLE: rakan-devicehistory
           IOT_ENDPOINT: '' # Set in deployment
           DECISION_FUNCTION_NAME: rakan-decision
       Policies:
         - DynamoDBCrudPolicy:
             TableName: rakan-devicestate
+             - DynamoDBCrudPolicy:
+            TableName: rakan-devicehistory
         - Statement:
             Effect: Allow
             Action:
@@ -54,6 +76,7 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: rakan-devicestate
+          HISTORY_TABLE: rakan-devicehistory
           IOT_ENDPOINT: '' # Set in deployment
       Policies:
         - Statement:

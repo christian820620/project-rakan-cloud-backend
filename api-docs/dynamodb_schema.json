@@ -1,9 +1,9 @@
 { 
-    "TableName": "rakan-devicestate",
+    "Schema": "rakan-device",
     "description": "Stores current state & desired state of iot devices(nano esp32)",
     "Tables":[
         {
-            "TableName": "device-state",
+            "TableName": "rakan-devicestate",
             "KeySchema": [
                 {
                     "AttributeName": "deviceId",
@@ -52,7 +52,7 @@
             ]
         },
         {
-            "TableName": "device-history",
+            "TableName": "rakan-devicehistory",
             "KeySchema": [
                 { "AttributeName": "deviceId", "KeyType": "HASH" },
                 { "AttributeName": "timestamp", "KeyType": "RANGE" }
