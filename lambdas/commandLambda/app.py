@@ -1,8 +1,10 @@
 import os
 import json
 import logging
+from datetime import datetime, timezone
 import boto3
 from botocore.exceptions import ClientError
+from dynamoLambda import update_desired_state
 
 dynamodb = boto3.resource('dynamodb')
 iot_client = boto3.client('iot-data', endpoint_url=os.environ.get('IOT_ENDPOINT', ''))
@@ -15,28 +17,23 @@ def lambda_handler(event, context):
     logger.info(f"Received event: {json.dumps(event)}")
     device_id = event.get('deviceId') or event.get('device_id')
     desired = event.get('desired')
+
     if not device_id or desired is None:
         logger.error("Missing deviceId or desired state in event")
         return {'statusCode': 400, 'body': 'Missing deviceId or desired'}
+    
+    update_desired_state(device_id, desired)
+
     try:
-        table = dynamodb.Table(table_name)
-        # Update desired state in DynamoDB
-        resp = table.update_item(
-            Key={'deviceId': device_id},
-            UpdateExpression="SET desired = :d, lastUpdate = :t",
-            ExpressionAttributeValues={
-                ':d': desired,
-                ':t': int(context.aws_request_id[:8], 16)
-            },
-            ReturnValues="UPDATED_NEW"
-        )
-        logger.info(f"Updated desired state for {device_id}: {desired}")
-        # Publish command to device
+        # Publish desired state to device
         topic = f"devices/{device_id}/commands"
         iot_client.publish(
             topic=topic,
             qos=0,
-            payload=json.dumps({'desired': desired})
+            payload=json.dumps({
+                'desired': desired,
+                'timestamp': datetime.now(timezone.utc).isoformat()
+            })
         )
         logger.info(f"Published desired state to {topic}")
         return {'statusCode': 200, 'body': 'Command processed'}
