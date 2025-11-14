@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: Project Rakan Smart Home API
+  version: 1.0.0
+  description: API for device state and command management in Project Rakan.
+servers:
+  - url: /v1
+paths:
+  /devices/{deviceId}:
+    get:
+      summary: Get device state
+      operationId: getDeviceState
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Device state
+          content:
+            application/json:
+              example:
+                deviceId: "abc123"
+                reported:
+                  temperatureF: 72
+                  occupancy: true
+                desired:
+                  mode: "cool"
+                lastUpdate: 1698712345
+        '404':
+          description: Device not found
+          content:
+            application/json:
+              example:
+                message: "Device not found"
+  /devices/{deviceId}/desired:
+    post:
+      summary: Set desired state for device
+      operationId: setDesiredState
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              desired:
+                mode: "heat"
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              example:
+                message: "Command processed"
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              example:
+                message: "Missing deviceId or desired"
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
