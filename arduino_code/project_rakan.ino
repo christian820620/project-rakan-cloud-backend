@@ -20,8 +20,7 @@
 #define AWS_IOT_PUBLISH_TOPIC   "thermostat/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "thermostat/sub"
 #define AWS_IOT_FAN_CONTROL     "thermostat/fan"
-#define AWS_IOT_HEAT_CONTROL    "thermostat/heat"
-#define AWS_IOT_AC_CONTROL      "thermostat/ac"
+#define AWS_IOT_HEATAC_CONTROL  "thermostat/heatAC"
 
 //Define LED On or Off for Heat/AC control
 #define LED_ON 255
@@ -91,8 +90,7 @@ void connectAWS() {
   //Subscribe to a topic
   client.subscribe(AWS_IOT_SUBSCRIBE_TOPIC);
   client.subscribe(AWS_IOT_FAN_CONTROL);
-  client.subscribe(AWS_IOT_HEAT_CONTROL);
-  client.subscribe(AWS_IOT_AC_CONTROL);
+  client.subscribe(AWS_IOT_HEATAC_CONTROL);
   Serial.println("AWS IoT Connected!");
 }
 
@@ -129,17 +127,12 @@ void messageHandler(char* AWS_topic, byte* payload, unsigned int length)
     fan_speed = doc["fan speed"];
     fan_speed_control(fan_speed);
   }
-  else if (strcmp(topic, "thermostat/heat") == 0)
+  else if (strcmp(topic, "thermostat/heatAC") == 0)
   {
-    int toggle = doc["heat set"];   //ON or OFF
-    heat_control(toggle);
+    int toggle_heat = doc["heat set"];   //ON or OFF
+    int toggle_ac   = doc["ac set"];
+    heatAC_control(toggle_heat, toggle_ac);
   }
-  else if (strcmp(topic, "thermostat/ac") == 0)
-  {
-    int toggle = doc["ac set"];
-    ac_control(toggle);
-  }
-
   Serial.println(message);
 }
 
@@ -157,10 +150,10 @@ void fan_speed_control(int speed)
   analogWrite(FAN_LED,fan_speed);     //Set LED brightness
 }
 
-//Heat control for LED
-void heat_control(int toggle)
+//Heat and AC control for corresponding LEDs
+void heatAC_control(int toggle_heat, int toggle_ac)
 {
-  if (toggle >= 1)
+  if (toggle_heat >= 1)
   {
     heat = true;
     analogWrite(HEAT_LED,LED_ON);
@@ -170,12 +163,8 @@ void heat_control(int toggle)
     heat = false;
     analogWrite(HEAT_LED,LED_OFF);
   }
-}
 
-//AC control for LED
-void ac_control(int toggle)
-{
-  if (toggle >= 1)
+  if (toggle_ac >= 1)
   {
     ac = true;
     analogWrite(AC_LED,LED_ON);
@@ -186,6 +175,7 @@ void ac_control(int toggle)
     analogWrite(AC_LED,LED_OFF);
   }
 }
+
 
 //Setup
 void setup() {
