@@ -127,7 +127,8 @@ void messageHandler(char* AWS_topic, byte* payload, unsigned int length)
     fan_speed = doc["fan speed"];
     fan_speed_control(fan_speed);
   }
-  else if (strcmp(topic, "thermostat/heatAC") == 0)
+    
+  if (strcmp(topic, "thermostat/heatAC") == 0)
   {
     int toggle_heat = doc["heat set"];   //ON or OFF
     int toggle_ac   = doc["ac set"];
