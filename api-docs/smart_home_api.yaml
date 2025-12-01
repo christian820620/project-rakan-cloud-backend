@@ -1,75 +1,109 @@
-openapi: 3.0.3
-info:
-  title: Project Rakan Smart Home API
-  version: 1.0.0
-  description: API for device state and command management in Project Rakan.
+openapi: 3.0.0
 servers:
-  - url: /v1
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/fgcu/Thermostat/1.0.0
+  - description: AWS API Gateway
+    url: https://gs4fjenadh.execute-api.us-east-2.amazonaws.com/thermo
+info:
+  description: |
+    This is a simple API for retrieving and sending data to a smart thermostat. Most of these are tested with curl command. 
+    Example:
+      curl -X POST "serverlink/directory" -H 'Content-Type: application/json' -H 'x-api-key: API-KEY' -d '{/"data"/:data}'
+  version: "1.0.0"
+  title: Smart Thermostat Controller - ESP32 Nano
+  contact:
+    email: tnguyen3279@eagle.fgcu.edu
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: thermostat
+    description: Operations available for thermostat
 paths:
-  /devices/{deviceId}:
+  /thermostat:
     get:
-      summary: Get device state
-      operationId: getDeviceState
-      parameters:
-        - name: deviceId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - thermostat
+      summary: get Thermostat's reading
+      operationId: getThermostat
+      description: |
+        Retrieving the latest reading data from the thermostat
       responses:
-        '200':
-          description: Device state
+        'default':
+          description: Retrieve data successfully
           content:
             application/json:
-              example:
-                deviceId: "abc123"
-                reported:
-                  temperatureF: 72
-                  occupancy: true
-                desired:
-                  mode: "cool"
-                lastUpdate: 1698712345
-        '404':
-          description: Device not found
-          content:
-            application/json:
-              example:
-                message: "Device not found"
-  /devices/{deviceId}/desired:
+              schema:
+                $ref: '#/components/schemas/data'
+  /thermostat/fan:
     post:
-      summary: Set desired state for device
-      operationId: setDesiredState
-      parameters:
-        - name: deviceId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            example:
-              desired:
-                mode: "heat"
+      tags:
+        - thermostat
+      summary: change fan speed
+      operationId: fanSpeed
+      description: |
+        Send signal to operate the fan speed from 0 to 100 in a JSON format as {"fan_speed_percent": number} (See set_fan schema)
       responses:
         '200':
-          description: Command accepted
-          content:
-            application/json:
-              example:
-                message: "Command processed"
+          description: Publish successfully to fan speed {fan_speed_percent}
         '400':
-          description: Bad request
-          content:
-            application/json:
-              example:
-                message: "Missing deviceId or desired"
-security:
-  - bearerAuth: []
+          description: Error + str(error)
+        '500':
+          description: Error publishing to IoT topic + str(error)
+  /thermostat/heatAC:
+    post:
+      tags:
+        - thermostat
+      summary: toggle heat and AC
+      operationId: heatAC
+      description: |
+        Send signal to toggle heat AND AC in a JSON format as heat_ac schema below
+      responses:
+        '200':
+          description: Publish successfully
+        '400':
+          description: Error + str(error)
+        '500':
+          description: Error publishing to IoT topic + str(error)
+
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+  schemas:
+    data:
+      type: object
+      properties:
+        Temperature:
+          type: number
+          format: float
+          example: 12.34
+        Humidity:
+          type: number
+          format: float
+          example: 12.34
+        Heat:
+          type: boolean
+        AC:
+          type: boolean
+        Fan Speed Percent:
+          type: number
+          format: float
+          example: 12.34
+    set_fan:
+      type: object
+      properties:
+        fan_speed_percent:
+          type: number
+          format: float
+          example: 12.34
+      required:
+        - fan_speed_percent
+    heat_ac:
+      type: object
+      properties: 
+        heat:
+          type: boolean
+        ac:
+          type: boolean
+      required:
+        - heat
+        - ac
