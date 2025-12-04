@@ -1,0 +1,19 @@
+{
+  "agent": {
+    "name": "MyBedrockAgent",
+    "id": "example_how_bedrock_agent_read_json_file"
+  },
+  "actionGroup": {
+    "name": "action_group_we_set",
+    "id": "AG123456789"
+  },
+  "function": "example_function_that_agent_use",
+  "parameters": [
+    {
+      "name": "parameter_to_pass",
+      "value": "some_value"
+    }
+  ],
+  "sessionId": "session123",
+  "invocationId": "invocation456"
+}
