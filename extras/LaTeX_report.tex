@@ -1,0 +1,94 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{hyperref}
+
+\onehalfspacing
+
+\title{Project Rakan\\\large Final Project Report}
+\author{
+Group: Git Wreckers\\[0.5em]
+Christian Fernandez\\
+Vesper Nguyen\\
+Sebastian Asiatico\\
+Esmir Ramirez\\
+Myles Vinal
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{The problem you selected and why it matters}
+
+Project Rakan is a cloud-based smart home automation system that connects a physical IoT device (ESP 32) to the AWS cloud. Homes today are filled with smart technology which is often not used in an efficient way. Things like smart thermostats, smart lights, smart sensors, and much more can be optimized. 
+
+Our project focuses on enhancing smart homes by reducing electrical costs, among other things. Project Rakan is focused on creating real-time automated smart homes that reduce energy usage, increase comfort, stay consistent, and provide smart decision making for homes. Our goal was to design and set up AWS services that can collect data from smart devices, process data in the cloud, while also implementing an AI that can make smart autonomous decisions. Overall, the goal was to create a smart and modern backend that can power a smart home system.
+
+\section{The team roles and who contributed to each part}
+
+Vesper Nguyen: Group leader, full stack developer, our greatest contributor to code, and set up the base for our project. Vesper fixed many issues across the project and even fixed the permission system issues across the different AWS services. They contributed to the IoT device, which is the big part of our simulated smart home device using an ESP Nano, and created the vast majority of AWS functions that were key to our project.
+
+Christian Fernandez: Kept track of progress, presentation design, reporting, and documentation. Drafted plans for the project and helped coordinate the team. Filled in wherever there was any need.
+
+Myles Vinal: Worked mainly on the API Gateway so the frontend team could have access to our backend, allowing access to our setup of AWS smart home services.
+
+Sebastian Asiatico: DynamoDB setup, worked on the base data schema design.
+
+Esmir Ramirez: Worked with AWS Bedrock services and researched types of AI agents, etc.
+
+\section{Your design choices and any changes you made along the way}
+
+During the course of this project, we were all pretty new to AWS, its different services, and how they worked. The lack of experience made it hard to progress. Our initial design has changed since we first started.
+
+The main difference is how the AWS Bedrock Agent reads JSON file formats, and we needed to adjust it according to AWS documentation. When we first drafted our project plans, we thought Bedrock could easily perform autonomous actions by itself with just simple output. However, we quickly realized how important and crucial AWS Lambda would be for the backend.
+
+AWS Lambda is the essential brain in our project. We had to make sure functions were set up to grab data, log data, and control functions for fan speed for our Bedrock Agent. AWS Lambda was the key to connecting all the services so they can perform actions and so that we could actually log data into the DynamoDB tables. The Bedrock Agent has to be invoked with AWS Lambda, and that is the biggest change in our project because it cannot be allowed to access anything without invoking Lambda functions.
+
+The overall design view is: the ESP 32 connects to AWS IoT Core. We use MQTT messaging to send data. We set up AWS Lambda with many functions which are invoked by other services. For example, IoT Core has to save its raw data and update the status and latest data, so it invokes a Lambda decision function. Lambda can also store data into DynamoDB and can call upon the AWS Bedrock Agent in order to decide actions like setting fan speed.
+
+\section{The methods, tools, data, or technologies you used}
+
+ESP 32 Nano Device: A physical simulation device that is used to simulate how a smart device could interact between itself and AWS. We use the Arduino IDE to upload our code to the device.
+
+AWS IoT Core: Provides secure MQTT communication and routing between the device and our AWS services using a pub/sub model.
+
+AWS Lambda (Python): Used for invoking actions and functions. It is the brain of our project because AWS Lambda is a serverless compute service set up with a variety of functions that perform the actions we need for our AWS services.
+
+AWS DynamoDB: Logs and stores data which includes device state, data, and AI decisions.
+
+AWS Bedrock Agent (Nova Lite): Uses instructions that it was given as a guideline to then invoke appropriate Lambda functions in order to retrieve necessary data for itself, then make decisions based on those data and user input.
+
+GitHub + VS Code: Used for source control, code storage, branching, development, and collaboration.
+
+\section{The challenges you encountered and how you solved them}
+
+This project came with many challenges.
+
+The setup for IoT device connectivity took some time. However, after validation of endpoint settings, the baseline connection needed for our backend was ready.
+
+IAM permissions were a huge issue that we realized as development progressed. Lambda functions could not initially publish commands or log data, etc., until IAM policies were changed. This is because of AWS permission setups which are configured by Amazon for the purpose of security and control.
+
+DynamoDB tables were new to us, and we were initially not sure what we wanted to log or how to invoke the Lambda functions to actually log data and the AI decision logs.
+
+AI Agent integration was the biggest challenge and took days of work and endless YouTube tutorials. AWS Bedrock requires correct schemas as well as other configurations in order for it to actually be able to read data and make decisions. Connecting the Agent to our other AWS services took the most amount of time out of all our backend services.
+
+\section{The results of your project and what you learned from the process}
+
+The result of our project is a functional smart automated home system that incorporates real hardware, real-time cloud ingestion, serverless automations, DynamoDB logging, and AI Agent integration in order to build a smart home system that can save users money and time.
+
+We learned many things throughout the course of this project, which include AWS multi-service architecture, IoT Core and MQTT connectivity, and the use of serverless functions and how they communicate across different AWS services. We also learned how AI agents use structured data to make choices.
+
+\section{Any future work or improvements you would consider}
+
+Future work can include the creation of a fully functioning frontend for our backend to connect to. Project Rakan can definitely be turned into a fully functioning app or website for users to use in their homes.
+
+Other improvements could also be the addition of more device types like lights, motion sensors, etc. We could also focus on improving AI reasoning to make even better decisions in our smart homes. One final addition could be the addition of notifications for when conditions exceed a certain threshold; for example, if the heat in a home is rising too quickly, an update can be sent out to notify the user about the issue.
+
+\section*{Source Code \& Documentations}
+
+GitHub: \url{https://github.com/christian820620/project-rakan-cloud-backend.git}
+
+\end{document}
