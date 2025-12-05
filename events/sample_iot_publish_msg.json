@@ -1,0 +1,8 @@
+{
+  "temperature" : 70,
+  "humidity" : 60,
+  "fan speed percent": 50,
+  "heat" : true,
+  "ac" : false,
+  "comment" : "This is a sample of how our IoT device publish its message"
+}
